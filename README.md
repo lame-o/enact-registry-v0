@@ -2,22 +2,6 @@
 
 A modern web interface for managing and discovering Enact Protocol tasks. Built with React, TypeScript, and Tailwind CSS.
 
-## Features
-
-- 🔍 Smart search functionality for tasks
-- 🎯 Task management with YAML support
-- 🏷️ Task categorization with badges (version, atomic, author)
-- 💫 Modern, responsive UI with dark theme
-- 🔄 Real-time task updates
-
-## Tech Stack
-
-- **Framework**: React + TypeScript
-- **Styling**: Tailwind CSS + shadcn/ui
-- **State Management**: Zustand
-- **Build Tool**: Vite
-- **Icons**: Lucide Icons
-
 ## Getting Started
 
 1. Clone the repository:
