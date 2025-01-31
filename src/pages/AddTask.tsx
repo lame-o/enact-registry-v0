@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import * as z from "zod";
 import { Icon } from "@iconify/react";
 import { useTaskStore } from "@/store/taskStore";
@@ -15,23 +15,24 @@ import { Task, ProtocolDetails } from "@/types/protocol";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const formSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  description: z.string().min(1, "Description is required"),
-  teams: z.string().min(1, "Teams are required"),
-  authorName: z.string().min(1, "Author name is required"),
-  authorEmail: z.string().email("Invalid email").optional(),
-  authorOrg: z.string().optional(),
-  inputName: z.string().min(1, "Input name is required"),
-  inputType: z.string().min(1, "Input type is required"),
-  inputDescription: z.string().min(1, "Input description is required"),
-  inputDefault: z.string().optional(),
   taskId: z.string().min(1, "Task ID is required"),
+  description: z.string().min(1, "Description is required"),
+  authorName: z.string().min(1, "Author name is required"),
+  protocolType: z.string().min(1, "Protocol type is required"),
+  inputs: z.array(z.object({
+    name: z.string().min(1, "Input name is required"),
+    type: z.string().min(1, "Input type is required"),
+    description: z.string().min(1, "Input description is required"),
+    default: z.string().optional(),
+  })),
   taskType: z.string().min(1, "Task type is required"),
   taskLanguage: z.string().min(1, "Task language is required"),
-  taskDescription: z.string().min(1, "Task description is required"),
-  outputType: z.string().min(1, "Output type is required"),
-  outputName: z.string().min(1, "Output name is required"),
-  outputDescription: z.string().min(1, "Output description is required"),
+  taskCode: z.string().min(1, "Task code is required"),
+  outputProperties: z.array(z.object({
+    name: z.string().min(1, "Property name is required"),
+    type: z.string().min(1, "Property type is required"),
+    description: z.string().optional(),
+  })),
 });
 
 const AddTask = () => {
@@ -41,24 +42,26 @@ const AddTask = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      teams: "",
-      authorName: "",
-      authorEmail: "",
-      authorOrg: "",
-      inputName: "",
-      inputType: "string",
-      inputDescription: "",
-      inputDefault: "",
       taskId: "",
+      description: "",
+      authorName: "",
+      protocolType: "atomic",
+      inputs: [{ name: "", type: "string", description: "", default: "" }],
       taskType: "script",
       taskLanguage: "python",
-      taskDescription: "",
-      outputType: "object",
-      outputName: "",
-      outputDescription: "",
+      taskCode: "",
+      outputProperties: [{ name: "", type: "string", description: "" }],
     },
+  });
+
+  const { fields: inputFields, append: appendInput, remove: removeInput } = useFieldArray({
+    control: form.control,
+    name: "inputs"
+  });
+
+  const { fields: outputPropertyFields, append: appendOutputProperty, remove: removeOutputProperty } = useFieldArray({
+    control: form.control,
+    name: "outputProperties"
   });
 
   const handleYamlUpload = async (content: string) => {
@@ -107,7 +110,7 @@ const AddTask = () => {
       };
 
       // Set form values
-      form.setValue('name', taskData.name);
+      form.setValue('taskId', taskData.name);
       form.setValue('description', taskData.description);
       form.setValue('version', taskData.version);
       form.setValue('teams', taskData.teams);
@@ -125,10 +128,7 @@ const AddTask = () => {
       const firstInputKey = Object.keys(taskData.protocolDetails.inputs)[0];
       if (firstInputKey) {
         const firstInput = taskData.protocolDetails.inputs[firstInputKey];
-        form.setValue('inputName', firstInputKey);
-        form.setValue('inputType', firstInput.type);
-        form.setValue('inputDescription', firstInput.description);
-        form.setValue('inputDefault', firstInput.default);
+        form.setValue('inputs', [{ name: firstInputKey, type: firstInput.type, description: firstInput.description, default: firstInput.default }]);
       }
 
       // Set first task if exists
@@ -137,7 +137,6 @@ const AddTask = () => {
         form.setValue('taskId', firstTask.id);
         form.setValue('taskType', firstTask.type);
         form.setValue('taskLanguage', firstTask.language || '');
-        form.setValue('taskDescription', firstTask.description || '');
         form.setValue('taskCode', firstTask.code || '');
       }
 
@@ -145,9 +144,7 @@ const AddTask = () => {
       const firstOutputKey = Object.keys(taskData.protocolDetails.outputs.properties)[0];
       if (firstOutputKey) {
         const firstOutput = taskData.protocolDetails.outputs.properties[firstOutputKey];
-        form.setValue('outputName', firstOutputKey);
-        form.setValue('outputType', firstOutput.type);
-        form.setValue('outputDescription', firstOutput.description || '');
+        form.setValue('outputProperties', [{ name: firstOutputKey, type: firstOutput.type, description: firstOutput.description || '' }]);
       }
 
       toast.success('YAML loaded successfully');
@@ -159,53 +156,54 @@ const AddTask = () => {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     const newTask = {
-      name: values.name,
+      name: values.taskId,
       description: values.description,
       version: "1.0.0",
-      teams: values.teams.split(",").map(t => t.trim()),
+      teams: [],
       isAtomic: true,
       protocolDetails: {
         enactVersion: "1.0.0",
         id: values.taskId,
-        name: values.name,
+        name: values.taskId,
         description: values.description,
         version: "1.0.0",
+        type: values.protocolType,
         authors: [
           {
             name: values.authorName,
-            email: values.authorEmail,
-            organization: values.authorOrg
+            email: "",
+            organization: ""
           }
         ],
-        inputs: {
-          [values.inputName]: {
-            type: values.inputType,
-            description: values.inputDescription,
-            default: values.inputDefault || undefined,
-            required: !values.inputDefault
+        inputs: values.inputs.reduce((acc, input) => ({
+          ...acc,
+          [input.name]: {
+            type: input.type,
+            description: input.description,
+            default: input.default || undefined,
+            required: !input.default
           }
-        },
+        }), {}),
         tasks: [
           {
             id: values.taskId,
             type: values.taskType,
             language: values.taskLanguage,
-            description: values.taskDescription
+            code: values.taskCode
           }
         ],
         flow: {
-          steps: [
-            { task: values.taskId }
-          ]
+          steps: [{ task: values.taskId }]
         },
         outputs: {
-          type: values.outputType,
-          properties: {
-            [values.outputName]: {
-              type: values.outputType,
-              description: values.outputDescription
+          type: "object",
+          properties: values.outputProperties.reduce((acc, prop) => ({
+            ...acc,
+            [prop.name]: {
+              type: prop.type,
+              description: prop.description || undefined
             }
-          }
+          }), {})
         }
       }
     };
@@ -213,6 +211,11 @@ const AddTask = () => {
     addTask(newTask);
     toast.success("Task created successfully!");
     navigate("/");
+  };
+
+  const autoResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    e.target.style.height = 'auto';
+    e.target.style.height = e.target.scrollHeight + 'px';
   };
 
   return (
@@ -277,7 +280,7 @@ const AddTask = () => {
                       <CardHeader className="pb-2">
                         <CollapsibleTrigger className="flex justify-between items-center w-full">
                           <CardTitle className="text-white flex items-center gap-2">
-                            <img src="/bubble-bit.webp" alt="Bubble" className="h-5 w-5" />
+                            <img src="/bubble-bit-white.webp" alt="Bubble" className="h-5 w-5" />
                             Basic Information
                           </CardTitle>
                           <Icon icon="lucide:chevron-down" className="w-5 h-5 text-gray-400" />
@@ -287,12 +290,12 @@ const AddTask = () => {
                         <CardContent className="space-y-4">
                           <FormField
                             control={form.control}
-                            name="name"
+                            name="taskId"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-white">Task Name</FormLabel>
+                                <FormLabel className="text-white">Task ID</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="Enter task name" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                  <Input placeholder="Enter task ID" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -313,19 +316,6 @@ const AddTask = () => {
                           />
                           <FormField
                             control={form.control}
-                            name="teams"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-white">Teams</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Enter teams" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
                             name="authorName"
                             render={({ field }) => (
                               <FormItem>
@@ -339,25 +329,12 @@ const AddTask = () => {
                           />
                           <FormField
                             control={form.control}
-                            name="authorEmail"
+                            name="protocolType"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-white">Author Email</FormLabel>
+                                <FormLabel className="text-white">Protocol Type</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="Enter author email" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="authorOrg"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-white">Author Organization</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Enter author organization" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                  <Input placeholder="e.g., atomic" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -371,8 +348,8 @@ const AddTask = () => {
                   {/* Input Configuration Card */}
                   <Card className="bg-[#1a1f2c] border-white/20">
                     <Collapsible>
-                      <CardHeader className="pb-2">
-                        <CollapsibleTrigger className="flex justify-between items-center w-full">
+                      <CardHeader>
+                        <CollapsibleTrigger className="flex items-center justify-between w-full">
                           <CardTitle className="text-white flex items-center gap-2">
                             <Icon icon="mdi:input" className="h-5 w-5" />
                             Input Configuration
@@ -382,58 +359,84 @@ const AddTask = () => {
                       </CardHeader>
                       <CollapsibleContent>
                         <CardContent className="space-y-4">
-                          <FormField
-                            control={form.control}
-                            name="inputName"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-white">Input Name</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="e.g., name" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="inputType"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-white">Type</FormLabel>
-                                <FormControl>
-                                  <Input placeholder='e.g., "string"' {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="inputDescription"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-white">Description</FormLabel>
-                                <FormControl>
-                                  <Input placeholder='e.g., "Name to greet"' {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="inputDefault"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-white">Default Value</FormLabel>
-                                <FormControl>
-                                  <Input placeholder='e.g., "World"' {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                          {inputFields.map((field, index) => (
+                            <div key={field.id} className="space-y-4 p-4 border border-white/20 rounded-lg">
+                              <div className="flex justify-between items-center">
+                                <h4 className="text-white text-sm font-medium">Input {index + 1}</h4>
+                                {index > 0 && (
+                                  <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={() => removeInput(index)}
+                                  >
+                                    Remove
+                                  </Button>
+                                )}
+                              </div>
+                              <FormField
+                                control={form.control}
+                                name={`inputs.${index}.name`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-white">Name</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="e.g., ticker" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={form.control}
+                                name={`inputs.${index}.type`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-white">Type</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="e.g., string" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={form.control}
+                                name={`inputs.${index}.description`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-white">Description</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Enter input description" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={form.control}
+                                name={`inputs.${index}.default`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-white">Default Value</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Optional default value" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                          ))}
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => appendInput({ name: "", type: "string", description: "", default: "" })}
+                            className="mt-2"
+                          >
+                            Add Input
+                          </Button>
                         </CardContent>
                       </CollapsibleContent>
                     </Collapsible>
@@ -442,10 +445,10 @@ const AddTask = () => {
                   {/* Task Configuration Card */}
                   <Card className="bg-[#1a1f2c] border-white/20">
                     <Collapsible>
-                      <CardHeader className="pb-2">
-                        <CollapsibleTrigger className="flex justify-between items-center w-full">
+                      <CardHeader>
+                        <CollapsibleTrigger className="flex items-center justify-between w-full">
                           <CardTitle className="text-white flex items-center gap-2">
-                            <Icon icon="lucide:code" className="h-5 w-5" />
+                            <Icon icon="mdi:cog" className="h-5 w-5" />
                             Task Configuration
                           </CardTitle>
                           <Icon icon="lucide:chevron-down" className="w-5 h-5 text-gray-400" />
@@ -453,19 +456,6 @@ const AddTask = () => {
                       </CardHeader>
                       <CollapsibleContent>
                         <CardContent className="space-y-4">
-                          <FormField
-                            control={form.control}
-                            name="taskId"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-white">Task ID</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="e.g., sayHello" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
                           <FormField
                             control={form.control}
                             name="taskType"
@@ -484,7 +474,7 @@ const AddTask = () => {
                             name="taskLanguage"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-white">Task Language</FormLabel>
+                                <FormLabel className="text-white">Language</FormLabel>
                                 <FormControl>
                                   <Input placeholder="e.g., python" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
                                 </FormControl>
@@ -494,15 +484,24 @@ const AddTask = () => {
                           />
                           <FormField
                             control={form.control}
-                            name="taskDescription"
+                            name="taskCode"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-white">Task Description</FormLabel>
+                                <FormLabel className="text-white">Task Code</FormLabel>
                                 <FormControl>
                                   <Textarea 
-                                    placeholder={`e.g.,\nname = inputs.get('name', 'World')\nprint(f"Hello, {name}!")`}
-                                    className="font-mono min-h-[200px] bg-[#2a2e3e] text-white border-white/20"
-                                    {...field} 
+                                    placeholder={`def get_stock_price(ticker, api_key):
+    url = f"https://api.example.com/v1/stocks/{ticker}"
+    response = requests.get(url, headers={"Authorization": api_key})
+    data = response.json()
+    return {"price": data["price"]}`}
+                                    {...field}
+                                    onChange={(e) => {
+                                      field.onChange(e);
+                                      autoResize(e);
+                                    }}
+                                    onInput={autoResize}
+                                    className="font-mono min-h-[200px] bg-[#2a2e3e] text-white border-white/20 resize-none overflow-hidden" 
                                   />
                                 </FormControl>
                                 <FormMessage />
@@ -517,8 +516,8 @@ const AddTask = () => {
                   {/* Output Configuration Card */}
                   <Card className="bg-[#1a1f2c] border-white/20">
                     <Collapsible>
-                      <CardHeader className="pb-2">
-                        <CollapsibleTrigger className="flex justify-between items-center w-full">
+                      <CardHeader>
+                        <CollapsibleTrigger className="flex items-center justify-between w-full">
                           <CardTitle className="text-white flex items-center gap-2">
                             <Icon icon="mdi:output" className="h-5 w-5" />
                             Output Configuration
@@ -528,57 +527,75 @@ const AddTask = () => {
                       </CardHeader>
                       <CollapsibleContent>
                         <CardContent className="space-y-4">
-                          <FormField
-                            control={form.control}
-                            name="outputType"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-white">Output Type</FormLabel>
-                                <FormControl>
-                                  <Input 
-                                    placeholder='e.g., "object"' 
-                                    {...field} 
-                                    className="bg-[#2a2e3e] text-white border-white/20" 
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="outputName"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-white">Output Name</FormLabel>
-                                <FormControl>
-                                  <Input 
-                                    placeholder='e.g., "greeting"' 
-                                    {...field} 
-                                    className="bg-[#2a2e3e] text-white border-white/20" 
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="outputDescription"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-white">Output Description</FormLabel>
-                                <FormControl>
-                                  <Input 
-                                    placeholder='e.g., "The greeting message"' 
-                                    {...field} 
-                                    className="bg-[#2a2e3e] text-white border-white/20" 
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                          <div className="p-4 bg-[#2a2e3e] rounded-lg">
+                            <p className="text-white text-sm mb-2">Output Type: object</p>
+                            <p className="text-gray-400 text-xs mb-4">This task's output will be an object with the following properties:</p>
+                          </div>
+                          {outputPropertyFields.map((field, index) => (
+                            <div key={field.id} className="space-y-4 p-4 border border-white/20 rounded-lg">
+                              <div className="flex justify-between items-center">
+                                <h4 className="text-white text-sm font-medium">Property {index + 1}</h4>
+                                {index > 0 && (
+                                  <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={() => removeOutputProperty(index)}
+                                  >
+                                    Remove
+                                  </Button>
+                                )}
+                              </div>
+                              <FormField
+                                control={form.control}
+                                name={`outputProperties.${index}.name`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-white">Property Name</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="e.g., price" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={form.control}
+                                name={`outputProperties.${index}.type`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-white">Property Type</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="e.g., float" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <FormField
+                                control={form.control}
+                                name={`outputProperties.${index}.description`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-white">Description (Optional)</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Enter property description" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                          ))}
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => appendOutputProperty({ name: "", type: "string", description: "" })}
+                            className="mt-2"
+                          >
+                            Add Property
+                          </Button>
                         </CardContent>
                       </CollapsibleContent>
                     </Collapsible>
