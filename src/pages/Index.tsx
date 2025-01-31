@@ -64,7 +64,7 @@ const TaskCard = ({ task }: { task: Task }) => {
                     <div className="flex items-start gap-2">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <code className="text-sm font-mono text-white">{key}</code>
+                          <code className="text-base font-mono text-white">{key}</code>
                           <Badge variant="outline" className="bg-blue-100 text-blue-800 rounded border-0 px-2 py-0.5 text-xs font-medium">{input.type}</Badge>
                         </div>
                         <p className="text-sm text-gray-300">{input.description}</p>
@@ -141,7 +141,7 @@ const TaskCard = ({ task }: { task: Task }) => {
                     <div className="flex items-start gap-2">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <code className="text-sm font-mono text-white">{key}</code>
+                          <code className="text-base font-mono text-white">{key}</code>
                           <Badge variant="outline" className="bg-blue-100 text-blue-800 rounded border-0 px-2 py-0.5 text-xs font-medium">{output.type}</Badge>
                         </div>
                         {output.description && (

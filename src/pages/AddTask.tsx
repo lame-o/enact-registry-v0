@@ -1,18 +1,18 @@
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Badge as BadgeIcon } from "lucide-react";
 import { Icon } from "@iconify/react";
 import { useTaskStore } from "@/store/taskStore";
 import { toast } from "sonner";
 import { parse } from 'yaml';
 import { Task, ProtocolDetails } from "@/types/protocol";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -273,278 +273,315 @@ const AddTask = () => {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   {/* Basic Information Card */}
                   <Card className="bg-[#1a1f2c] border-white/20">
-                    <CardHeader>
-                      <CardTitle className="text-white flex items-center gap-2">
-                        <BadgeIcon className="h-5 w-5" />
-                        Basic Information
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Task Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter task name" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Description</FormLabel>
-                            <FormControl>
-                              <Textarea placeholder="Enter task description" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="teams"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Teams</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter teams" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="authorName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Author Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter author name" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="authorEmail"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Author Email</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter author email" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="authorOrg"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Author Organization</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter author organization" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </CardContent>
+                    <Collapsible>
+                      <CardHeader className="pb-2">
+                        <CollapsibleTrigger className="flex justify-between items-center w-full">
+                          <CardTitle className="text-white flex items-center gap-2">
+                            <img src="/bubble-bit.webp" alt="Bubble" className="h-5 w-5" />
+                            Basic Information
+                          </CardTitle>
+                          <Icon icon="lucide:chevron-down" className="w-5 h-5 text-gray-400" />
+                        </CollapsibleTrigger>
+                      </CardHeader>
+                      <CollapsibleContent>
+                        <CardContent className="space-y-4">
+                          <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Task Name</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Enter task name" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Description</FormLabel>
+                                <FormControl>
+                                  <Textarea placeholder="Enter task description" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="teams"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Teams</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Enter teams" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="authorName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Author Name</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Enter author name" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="authorEmail"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Author Email</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Enter author email" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="authorOrg"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Author Organization</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Enter author organization" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </CardContent>
+                      </CollapsibleContent>
+                    </Collapsible>
                   </Card>
 
                   {/* Input Configuration Card */}
                   <Card className="bg-[#1a1f2c] border-white/20">
-                    <CardHeader>
-                      <CardTitle className="text-white">Input Configuration</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <FormField
-                        control={form.control}
-                        name="inputName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Input Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="e.g., name" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="inputType"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Type</FormLabel>
-                            <FormControl>
-                              <Input placeholder='e.g., "string"' {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="inputDescription"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Description</FormLabel>
-                            <FormControl>
-                              <Input placeholder='e.g., "Name to greet"' {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="inputDefault"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Default Value</FormLabel>
-                            <FormControl>
-                              <Input placeholder='e.g., "World"' {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </CardContent>
+                    <Collapsible>
+                      <CardHeader className="pb-2">
+                        <CollapsibleTrigger className="flex justify-between items-center w-full">
+                          <CardTitle className="text-white flex items-center gap-2">
+                            <Icon icon="mdi:input" className="h-5 w-5" />
+                            Input Configuration
+                          </CardTitle>
+                          <Icon icon="lucide:chevron-down" className="w-5 h-5 text-gray-400" />
+                        </CollapsibleTrigger>
+                      </CardHeader>
+                      <CollapsibleContent>
+                        <CardContent className="space-y-4">
+                          <FormField
+                            control={form.control}
+                            name="inputName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Input Name</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="e.g., name" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="inputType"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Type</FormLabel>
+                                <FormControl>
+                                  <Input placeholder='e.g., "string"' {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="inputDescription"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Description</FormLabel>
+                                <FormControl>
+                                  <Input placeholder='e.g., "Name to greet"' {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="inputDefault"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Default Value</FormLabel>
+                                <FormControl>
+                                  <Input placeholder='e.g., "World"' {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </CardContent>
+                      </CollapsibleContent>
+                    </Collapsible>
                   </Card>
 
                   {/* Task Configuration Card */}
                   <Card className="bg-[#1a1f2c] border-white/20">
-                    <CardHeader>
-                      <CardTitle className="text-white">Task Configuration</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <FormField
-                        control={form.control}
-                        name="taskId"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Task ID</FormLabel>
-                            <FormControl>
-                              <Input placeholder="e.g., sayHello" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="taskType"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Task Type</FormLabel>
-                            <FormControl>
-                              <Input placeholder="e.g., script" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="taskLanguage"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Task Language</FormLabel>
-                            <FormControl>
-                              <Input placeholder="e.g., python" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="taskDescription"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Task Description</FormLabel>
-                            <FormControl>
-                              <Textarea 
-                                placeholder={`e.g.,\nname = inputs.get('name', 'World')\nprint(f"Hello, {name}!")`}
-                                className="font-mono min-h-[200px] bg-[#2a2e3e] text-white border-white/20"
-                                {...field} 
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </CardContent>
+                    <Collapsible>
+                      <CardHeader className="pb-2">
+                        <CollapsibleTrigger className="flex justify-between items-center w-full">
+                          <CardTitle className="text-white flex items-center gap-2">
+                            <Icon icon="lucide:code" className="h-5 w-5" />
+                            Task Configuration
+                          </CardTitle>
+                          <Icon icon="lucide:chevron-down" className="w-5 h-5 text-gray-400" />
+                        </CollapsibleTrigger>
+                      </CardHeader>
+                      <CollapsibleContent>
+                        <CardContent className="space-y-4">
+                          <FormField
+                            control={form.control}
+                            name="taskId"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Task ID</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="e.g., sayHello" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="taskType"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Task Type</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="e.g., script" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="taskLanguage"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Task Language</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="e.g., python" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="taskDescription"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Task Description</FormLabel>
+                                <FormControl>
+                                  <Textarea 
+                                    placeholder={`e.g.,\nname = inputs.get('name', 'World')\nprint(f"Hello, {name}!")`}
+                                    className="font-mono min-h-[200px] bg-[#2a2e3e] text-white border-white/20"
+                                    {...field} 
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </CardContent>
+                      </CollapsibleContent>
+                    </Collapsible>
                   </Card>
 
                   {/* Output Configuration Card */}
                   <Card className="bg-[#1a1f2c] border-white/20">
-                    <CardHeader>
-                      <CardTitle className="text-white">Output Configuration</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <FormField
-                        control={form.control}
-                        name="outputType"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Output Type</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder='e.g., "object"' 
-                                {...field} 
-                                className="bg-[#2a2e3e] text-white border-white/20" 
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="outputName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Output Name</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder='e.g., "greeting"' 
-                                {...field} 
-                                className="bg-[#2a2e3e] text-white border-white/20" 
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="outputDescription"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">Output Description</FormLabel>
-                            <FormControl>
-                              <Input 
-                                placeholder='e.g., "The greeting message"' 
-                                {...field} 
-                                className="bg-[#2a2e3e] text-white border-white/20" 
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </CardContent>
+                    <Collapsible>
+                      <CardHeader className="pb-2">
+                        <CollapsibleTrigger className="flex justify-between items-center w-full">
+                          <CardTitle className="text-white flex items-center gap-2">
+                            <Icon icon="mdi:output" className="h-5 w-5" />
+                            Output Configuration
+                          </CardTitle>
+                          <Icon icon="lucide:chevron-down" className="w-5 h-5 text-gray-400" />
+                        </CollapsibleTrigger>
+                      </CardHeader>
+                      <CollapsibleContent>
+                        <CardContent className="space-y-4">
+                          <FormField
+                            control={form.control}
+                            name="outputType"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Output Type</FormLabel>
+                                <FormControl>
+                                  <Input 
+                                    placeholder='e.g., "object"' 
+                                    {...field} 
+                                    className="bg-[#2a2e3e] text-white border-white/20" 
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="outputName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Output Name</FormLabel>
+                                <FormControl>
+                                  <Input 
+                                    placeholder='e.g., "greeting"' 
+                                    {...field} 
+                                    className="bg-[#2a2e3e] text-white border-white/20" 
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="outputDescription"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Output Description</FormLabel>
+                                <FormControl>
+                                  <Input 
+                                    placeholder='e.g., "The greeting message"' 
+                                    {...field} 
+                                    className="bg-[#2a2e3e] text-white border-white/20" 
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </CardContent>
+                      </CollapsibleContent>
+                    </Collapsible>
                   </Card>
 
                   <div className="flex justify-end">

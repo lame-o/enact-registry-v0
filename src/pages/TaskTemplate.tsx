@@ -58,8 +58,8 @@ const TaskTemplate = () => {
             </Button>
           </div>
           
-          <div className="bg-[#1a1f2c] rounded-lg p-6">
-            <Tabs defaultValue="structured" className="space-y-4">
+          <div className="bg-[#1a2234] rounded-lg p-6">
+            <Tabs defaultValue="structured" className="space-y-1">
               <TabsList className="bg-white/10 backdrop-blur-sm border border-white/20 p-1 rounded-lg">
                 <TabsTrigger 
                   value="structured" 
@@ -76,7 +76,7 @@ const TaskTemplate = () => {
               </TabsList>
 
               <TabsContent value="structured">
-                <Card className="bg-[#1a2234] border-gray-700">
+                <Card className="bg-[#1a2234] border-none">
                   <CardHeader className="pb-5">
                     <div className="flex items-start gap-2">
                       <Icon icon="lucide:file-text" className="w-5 h-5 text-gray-400 mt-1" />
@@ -105,7 +105,7 @@ const TaskTemplate = () => {
                             <div className="flex items-start gap-2">
                               <div className="flex-1">
                                 <div className="flex items-center gap-2">
-                                  <span className="text-white font-medium">name</span>
+                                  <code className="text-base font-mono text-white">name</code>
                                   <Badge variant="outline" className="bg-blue-100 text-blue-800 rounded border-0 px-2 py-0.5 text-xs font-medium">string</Badge>
                                 </div>
                                 <p className="text-sm text-gray-300">Name to greet</p>
@@ -127,10 +127,10 @@ const TaskTemplate = () => {
                             <div className="flex items-start gap-2">
                               <div className="flex-1">
                                 <div className="flex items-center gap-2">
-                                  <span className="text-white font-medium">sayHello</span>
+                                  <code className="text-base font-mono text-white">sayHello</code>
                                   <Badge variant="outline" className="bg-green-100 text-green-800 rounded border-0 px-2 py-0.5 text-xs font-medium">python</Badge>
                                 </div>
-                                <pre className="mt-2 p-2 bg-[#111828] rounded text-sm text-gray-300 overflow-x-auto">
+                                <pre className="mt-2 p-2 bg-[#111828] rounded text-sm text-gray-300 overflow-x-auto font-mono">
                                   <code>{`name = inputs.get('name', 'World')
 print(f"Hello, {name}!")`}</code>
                                 </pre>
@@ -151,7 +151,7 @@ print(f"Hello, {name}!")`}</code>
                             <div className="flex items-center gap-2">
                               <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-700/50 text-gray-300 text-sm border border-gray-600/30">1</span>
                               <Icon icon="lucide:arrow-right" className="w-4 h-4 text-gray-400" />
-                              <span className="text-white">sayHello</span>
+                              <span className="text-white font-mono">sayHello</span>
                             </div>
                           </div>
                         </div>
@@ -168,7 +168,7 @@ print(f"Hello, {name}!")`}</code>
                             <div className="flex items-start gap-2">
                               <div className="flex-1">
                                 <div className="flex items-center gap-2">
-                                  <span className="text-white font-medium">message</span>
+                                  <code className="text-base font-mono text-white">message</code>
                                   <Badge variant="outline" className="bg-blue-100 text-blue-800 rounded border-0 px-2 py-0.5 text-xs font-medium">string</Badge>
                                 </div>
                               </div>
@@ -182,10 +182,10 @@ print(f"Hello, {name}!")`}</code>
               </TabsContent>
 
               <TabsContent value="raw">
-                <Card className="bg-[#1a2234] border-gray-700">
+                <Card className="bg-[#1a2234] border-none">
                   <CardContent className="pt-6">
-                    <pre className="bg-[#1f2937] p-4 rounded-md overflow-x-auto">
-                      <code className="text-gray-300">{TEMPLATE}</code>
+                    <pre className="bg-[#1f2937] p-4 rounded-md overflow-x-auto font-mono">
+                      <code className="text-sm text-gray-300">{TEMPLATE}</code>
                     </pre>
                   </CardContent>
                 </Card>
