@@ -38,12 +38,12 @@ const TaskCard = ({ task }: { task: Task }) => {
               </div>
               <CardDescription className="mt-1 text-gray-800 -ml-6">{task.description}</CardDescription>
               <div className="flex items-center gap-2 mt-3 -ml-7">
-                <Badge variant="secondary" className="bg-[#111729] text-gray-200 font-medium pointer-events-none">ENACT v{task.version}</Badge>
+                <Badge variant="secondary" className="bg-[#111729] text-gray-200 font-medium border border-gray-200 pointer-events-none">ENACT v{task.version}</Badge>
                 {task.isAtomic && (
-                  <Badge variant="secondary" className="bg-purple-100 text-purple-700 border border-purple-200 pointer-events-none">atomic</Badge>
+                  <Badge variant="secondary" className="bg-purple-100 text-purple-700 border border-purple-700 pointer-events-none">atomic</Badge>
                 )}
                 {task.teams.map((team) => (
-                  <Badge key={team} variant="secondary" className="bg-[#BCBCBC] text-gray-700 pointer-events-none">@{team}</Badge>
+                  <Badge key={team} variant="secondary" className="bg-[#BCBCBC] text-gray-700 border border-gray-700 pointer-events-none">@{team}</Badge>
                 ))}
               </div>
             </div>
@@ -91,6 +91,9 @@ const TaskCard = ({ task }: { task: Task }) => {
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <span className="text-gray-900 font-mono">{t.id}</span>
+                          {t.type && (
+                            <Badge variant="outline" className="bg-purple-100 text-purple-700 rounded border-purple-700 px-2 py-0.5 text-xs font-medium pointer-events-none">{t.type}</Badge>
+                          )}
                           {t.language && (
                             <Badge variant="outline" className="bg-green-100 text-green-700 rounded border-green-700 px-2 py-0.5 text-xs font-medium pointer-events-none">{t.language}</Badge>
                           )}

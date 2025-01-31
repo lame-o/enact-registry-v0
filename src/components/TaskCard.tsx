@@ -155,6 +155,11 @@ export const TaskCard = ({
                 <div key={task.id} className="bg-enact-bg/50 p-4 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="text-sm font-medium text-enact-accent">{task.id}</span>
+                    {task.type && (
+                      <span className="px-2 py-0.5 text-xs rounded-full bg-enact-accent/10 text-enact-accent">
+                        {task.type}
+                      </span>
+                    )}
                     <span className="px-2 py-0.5 text-xs rounded-full bg-enact-accent/10 text-enact-accent">
                       {task.language}
                     </span>
