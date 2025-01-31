@@ -22,18 +22,18 @@ import {
 
 const TaskCard = ({ task }: { task: Task }) => {
   return (
-    <Card className="mb-4 bg-[#1a2234] border-gray-700">
-      <Collapsible>
+    <Card className="mb-4 bg-[#1a2234] border-white/10">
+      <Collapsible className="group">
         <CardHeader className="pb-2">
           <div className="flex items-start gap-2">
-            <Icon icon="lucide:file-text" className="w-5 h-5 text-gray-400 mt-1" />
+            <img src="/bubble-bit.webp" alt="Task Icon" className="w-5 h-5 mt-1" />
             <div className="flex-1">
               <div className="flex items-center justify-between gap-2">
                 <CardTitle className="text-xl text-white">
                   {task.name}
                 </CardTitle>
                 <CollapsibleTrigger className="p-1 hover:bg-white/10 rounded-md transition-colors">
-                  <Icon icon="lucide:chevron-down" className="w-5 h-5 text-gray-400 transition-transform group-open:rotate-180" />
+                  <Icon icon="lucide:chevron-down" className="w-5 h-5 text-gray-400 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
                 </CollapsibleTrigger>
               </div>
               <CardDescription className="mt-1 text-gray-300 -ml-6">{task.description}</CardDescription>
@@ -55,8 +55,8 @@ const TaskCard = ({ task }: { task: Task }) => {
             {/* Inputs Section */}
             <div>
               <h3 className="text-white font-medium mb-2 flex items-center gap-2">
-                <Icon icon="mdi:input" className="w-4 h-4 text-gray-400" />
-                Inputs
+                <Icon icon="mdi:input" className="w-4 h-4 text-white" />
+                Inputs <span className="text-gray-400">({Object.keys(task.protocolDetails.inputs).length})</span>
               </h3>
               <div className="space-y-2">
                 {Object.entries(task.protocolDetails.inputs).map(([key, input]) => (
@@ -64,7 +64,7 @@ const TaskCard = ({ task }: { task: Task }) => {
                     <div className="flex items-start gap-2">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-white font-medium">{key}</span>
+                          <code className="text-sm font-mono text-white">{key}</code>
                           <Badge variant="outline" className="bg-blue-100 text-blue-800 rounded border-0 px-2 py-0.5 text-xs font-medium">{input.type}</Badge>
                         </div>
                         <p className="text-sm text-gray-300">{input.description}</p>
@@ -81,7 +81,7 @@ const TaskCard = ({ task }: { task: Task }) => {
             {/* Tasks Section */}
             <div>
               <h3 className="text-white font-medium mb-2 flex items-center gap-2">
-                <Icon icon="lucide:code" className="w-4 h-4 text-gray-400" />
+                <Icon icon="lucide:code" className="w-4 h-4 text-white" />
                 Tasks
               </h3>
               <div className="space-y-2">
@@ -90,7 +90,7 @@ const TaskCard = ({ task }: { task: Task }) => {
                     <div className="flex items-start gap-2">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-white font-medium">{t.id}</span>
+                          <span className="text-white font-mono">{t.id}</span>
                           {t.language && (
                             <Badge variant="outline" className="bg-green-100 text-green-800 rounded border-0 px-2 py-0.5 text-xs font-medium">{t.language}</Badge>
                           )}
@@ -113,7 +113,7 @@ const TaskCard = ({ task }: { task: Task }) => {
             {/* Flow Section */}
             <div>
               <h3 className="text-white font-medium mb-2 flex items-center gap-2">
-                <Icon icon="lucide:git-branch" className="w-4 h-4 text-gray-400" />
+                <Icon icon="lucide:git-branch" className="w-4 h-4 text-white" />
                 Flow
               </h3>
               <div className="space-y-2">
@@ -122,7 +122,7 @@ const TaskCard = ({ task }: { task: Task }) => {
                     <div className="flex items-center gap-2">
                       <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-700/50 text-gray-300 text-sm border border-gray-600/30">{index + 1}</span>
                       <Icon icon="lucide:arrow-right" className="w-4 h-4 text-gray-400" />
-                      <span className="text-white">{step.task}</span>
+                      <span className="text-white font-mono">{step.task}</span>
                     </div>
                   </div>
                 ))}
@@ -132,8 +132,8 @@ const TaskCard = ({ task }: { task: Task }) => {
             {/* Outputs Section */}
             <div>
               <h3 className="text-white font-medium mb-2 flex items-center gap-2">
-                <Icon icon="mdi:output" className="w-4 h-4 text-gray-400" />
-                Outputs
+                <Icon icon="mdi:output" className="w-4 h-4 text-white" />
+                Outputs <span className="text-gray-400">({Object.keys(task.protocolDetails.outputs.properties).length})</span>
               </h3>
               <div className="space-y-2">
                 {Object.entries(task.protocolDetails.outputs.properties).map(([key, output]) => (
@@ -141,7 +141,7 @@ const TaskCard = ({ task }: { task: Task }) => {
                     <div className="flex items-start gap-2">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-white font-medium">{key}</span>
+                          <code className="text-sm font-mono text-white">{key}</code>
                           <Badge variant="outline" className="bg-blue-100 text-blue-800 rounded border-0 px-2 py-0.5 text-xs font-medium">{output.type}</Badge>
                         </div>
                         {output.description && (
@@ -178,7 +178,7 @@ const Index = () => {
   }, [tasks, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-[#111828] text-white">
+    <div className="min-h-screen bg-[#111828] scrollbar-gutter-stable">
       <div className="container mx-auto py-12">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-8">
