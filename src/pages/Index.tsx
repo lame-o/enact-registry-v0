@@ -40,7 +40,7 @@ const TaskCard = ({ task }: { task: Task }) => {
               </div>
               <CardDescription className="mt-1 text-gray-800 -ml-6">{task.description}</CardDescription>
               <div className="flex items-center gap-2 mt-3 -ml-7">
-                <Badge variant="secondary" className="bg-[#111729] text-gray-200 font-medium border border-gray-200 pointer-events-none">ENACT v{task.version}</Badge>
+                <Badge variant="secondary" className="bg-[#111729] text-gray-200 font-medium border border-gray-200 pointer-events-none">ENACT v{task.protocolDetails.enactVersion}</Badge>
                 {task.isAtomic && (
                   <Badge variant="secondary" className="bg-purple-100 text-purple-700 border border-purple-700 pointer-events-none">atomic</Badge>
                 )}
@@ -165,8 +165,20 @@ const TaskCard = ({ task }: { task: Task }) => {
                 size="sm"
                 className="flex-1 flex items-center gap-2 justify-center bg-[#BCBCBC] text-black border border-gray-700 hover:bg-[#CFCFCF] hover:text-black"
                 onClick={() => {
-                  // Convert task to YAML and download
-                  const yaml = JSON.stringify(task.protocolDetails, null, 2); // TODO: Convert to actual YAML
+                  // Convert task to YAML format
+                  const yamlData = {
+                    enact: task.protocolDetails.enactVersion,
+                    id: task.protocolDetails.id,
+                    description: task.protocolDetails.description,
+                    version: task.protocolDetails.version,
+                    type: task.isAtomic ? "atomic" : "composite",
+                    authors: task.protocolDetails.authors,
+                    inputs: task.protocolDetails.inputs,
+                    tasks: task.protocolDetails.tasks,
+                    flow: task.protocolDetails.flow,
+                    outputs: task.protocolDetails.outputs
+                  };
+                  const yaml = JSON.stringify(yamlData, null, 2); // TODO: Convert to actual YAML
                   const blob = new Blob([yaml], { type: 'text/yaml' });
                   const url = URL.createObjectURL(blob);
                   const a = document.createElement('a');
@@ -186,7 +198,19 @@ const TaskCard = ({ task }: { task: Task }) => {
                 size="sm"
                 className="flex-1 flex items-center gap-2 justify-center bg-[#BCBCBC] text-black border border-gray-700 hover:bg-[#CFCFCF] hover:text-black"
                 onClick={() => {
-                  const json = JSON.stringify(task.protocolDetails, null, 2);
+                  const jsonData = {
+                    enact: task.protocolDetails.enactVersion,
+                    id: task.protocolDetails.id,
+                    description: task.protocolDetails.description,
+                    version: task.protocolDetails.version,
+                    type: task.isAtomic ? "atomic" : "composite",
+                    authors: task.protocolDetails.authors,
+                    inputs: task.protocolDetails.inputs,
+                    tasks: task.protocolDetails.tasks,
+                    flow: task.protocolDetails.flow,
+                    outputs: task.protocolDetails.outputs
+                  };
+                  const json = JSON.stringify(jsonData, null, 2);
                   const blob = new Blob([json], { type: 'application/json' });
                   const url = URL.createObjectURL(blob);
                   const a = document.createElement('a');

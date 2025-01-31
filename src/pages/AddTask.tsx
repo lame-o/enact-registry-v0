@@ -19,6 +19,7 @@ const formSchema = z.object({
   description: z.string().min(1, "Description is required"),
   authorName: z.string().min(1, "Author name is required"),
   protocolType: z.string().min(1, "Protocol type is required"),
+  version: z.string().min(1, "Version is required"),
   inputs: z.array(z.object({
     name: z.string().min(1, "Input name is required"),
     type: z.string().min(1, "Input type is required"),
@@ -46,6 +47,7 @@ const AddTask = () => {
       description: "",
       authorName: "",
       protocolType: "atomic",
+      version: "1.0.0",
       inputs: [{ name: "", type: "string", description: "", default: "" }],
       taskType: "script",
       taskLanguage: "python",
@@ -85,6 +87,7 @@ const AddTask = () => {
           id: yamlContent.id,
           name: yamlContent.id,
           description: yamlContent.description || "",
+          version: yamlContent.version || "1.0.0",
           authors: yamlContent.authors || [],
           inputs: yamlContent.inputs || {},
           tasks: (yamlContent.tasks || []).map(task => ({
@@ -110,6 +113,7 @@ const AddTask = () => {
       // Set form values
       form.setValue('taskId', taskData.name);
       form.setValue('description', taskData.description);
+      form.setValue('version', taskData.protocolDetails.version);
       form.setValue('isAtomic', taskData.isAtomic);
 
       // Set individual form fields for the form UI
@@ -158,6 +162,7 @@ const AddTask = () => {
         id: values.taskId,
         name: values.taskId,
         description: values.description,
+        version: values.version,
         type: values.protocolType,
         authors: [
           {
@@ -324,6 +329,19 @@ const AddTask = () => {
                                 <FormLabel className="text-white">Protocol Type</FormLabel>
                                 <FormControl>
                                   <Input placeholder="e.g., atomic" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="version"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-white">Version</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="e.g., 1.0.0" {...field} className="bg-[#2a2e3e] text-white border-white/20" />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
