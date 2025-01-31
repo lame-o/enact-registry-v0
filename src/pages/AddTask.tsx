@@ -221,24 +221,19 @@ const AddTask = () => {
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-8">
             <div className="flex items-center gap-3">
-              <h1 className="text-4xl font-bold text-white">Add New Task</h1>
-              <button 
-                onClick={() => navigate("/task-template")}
-                className="flex items-center gap-1 text-sm text-gray-300 hover:text-white group"
-              >
-                <span className="border-b border-gray-600 group-hover:border-white">Template</span>
-                <Icon icon="lucide:arrow-up-right" className="w-4 h-4" />
-              </button>
+              <img src="/globe-bit.png" alt="Enact Globe" className="h-10 w-auto rotate-180" />
+              <div className="flex items-center gap-4">
+                <h1 className="text-4xl font-bold text-white">Add Task</h1>
+                <button 
+                  onClick={() => navigate("/task-template")}
+                  className="flex items-center gap-1 text-sm text-gray-300 hover:text-white group"
+                >
+                  <span className="border-b border-gray-600 group-hover:border-white">Template</span>
+                  <Icon icon="lucide:arrow-up-right" className="w-4 h-4" />
+                </button>
+              </div>
             </div>
-            <div className="space-x-4">
-              <Button 
-                variant="outline" 
-                onClick={() => navigate("/")}
-                className="bg-[#2A2E3E] text-white border-white/20 hover:bg-[#4E7BFF] hover:text-white"
-              >
-                <Icon icon="lucide:arrow-left" className="w-4 h-4 mr-2" />
-                Back
-              </Button>
+            <div className="flex items-center gap-2">
               <Button 
                 variant="outline"
                 onClick={() => {
@@ -258,14 +253,20 @@ const AddTask = () => {
                   };
                   input.click();
                 }}
-                className="bg-[#2A2E3E] text-white border-white/20 hover:bg-[#4E7BFF] hover:text-white"
+                className="bg-white/10 hover:bg-white/20 text-white text-sm px-4 py-1.5 rounded-md backdrop-blur-sm border border-white/20 shadow-lg transition-all"
               >
                 <Icon icon="lucide:upload" className="w-4 h-4 mr-2" />
                 Upload YAML
               </Button>
+              <Button 
+                onClick={() => navigate("/")}
+                className="bg-white/10 hover:bg-white/20 text-white text-sm px-4 py-1.5 rounded-md backdrop-blur-sm border border-white/20 shadow-lg transition-all"
+              >
+                <Icon icon="lucide:arrow-left" className="w-4 h-4 mr-2" />
+                Back
+              </Button>
             </div>
           </div>
-          
           <div className="space-y-8">
             <div className="bg-[#1a1f2c] rounded-lg p-6">
               <Form {...form}>
@@ -549,7 +550,7 @@ const AddTask = () => {
                   <div className="flex justify-end">
                     <Button 
                       type="submit"
-                      className="bg-[#4E7BFF] text-white hover:bg-[#4E7BFF]/90"
+                      className="bg-white/10 hover:bg-white/20 text-white text-sm px-4 py-1.5 rounded-md backdrop-blur-sm border border-white/20 shadow-lg transition-all"
                     >
                       Create Task
                     </Button>
