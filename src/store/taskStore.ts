@@ -5,6 +5,7 @@ import type { Task } from '@/types/protocol';
 interface TaskStore {
   tasks: Task[];
   addTask: (task: Task) => void;
+  removeTask: (taskId: number) => void;
 }
 
 // Initial tasks
@@ -148,6 +149,7 @@ export const useTaskStore = create<TaskStore>()(
       addTask: (task) => set((state) => ({ 
         tasks: [...state.tasks, { ...task, id: state.tasks.length + 1 }] 
       })),
+      removeTask: (taskId) => set((state) => ({ tasks: state.tasks.filter(task => task.id !== taskId) }))
     }),
     {
       name: 'task-store',

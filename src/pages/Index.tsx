@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/collapsible";
 
 const TaskCard = ({ task }: { task: Task }) => {
+  const removeTask = useTaskStore((state) => state.removeTask);
+
   return (
     <Card className="mb-4 bg-[#ddddde]">
       <Collapsible className="group">
@@ -29,9 +31,9 @@ const TaskCard = ({ task }: { task: Task }) => {
             <img src="/bubble-bit.webp" alt="Task Icon" className="w-5 h-5 mt-1" />
             <div className="flex-1">
               <div className="flex items-center justify-between gap-2">
-                <CardTitle className="text-xl text-gray-900">
-                  {task.name}
-                </CardTitle>
+                <div className="flex items-center gap-2">
+                  <CardTitle className="text-xl font-semibold text-gray-900">{task.name}</CardTitle>
+                </div>
                 <CollapsibleTrigger className="p-1 hover:bg-black/5 rounded-md transition-colors">
                   <Icon icon="lucide:chevron-down" className="w-5 h-5 text-gray-600 transition-transform duration-200 ease-in-out group-data-[state=open]:rotate-180" />
                 </CollapsibleTrigger>
@@ -155,6 +157,58 @@ const TaskCard = ({ task }: { task: Task }) => {
                   </div>
                 ))}
               </div>
+            </div>
+            <div className="flex items-center gap-2 mt-4 border-t pt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 flex items-center gap-2 justify-center"
+                onClick={() => {
+                  // Convert task to YAML and download
+                  const yaml = JSON.stringify(task.protocolDetails, null, 2); // TODO: Convert to actual YAML
+                  const blob = new Blob([yaml], { type: 'text/yaml' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `${task.protocolDetails.name.toLowerCase().replace(/\s+/g, '-')}.yaml`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                }}
+              >
+                <Icon icon="lucide:download" className="w-4 h-4" />
+                Download YAML
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 flex items-center gap-2 justify-center"
+                onClick={() => {
+                  const json = JSON.stringify(task.protocolDetails, null, 2);
+                  const blob = new Blob([json], { type: 'application/json' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `${task.protocolDetails.name.toLowerCase().replace(/\s+/g, '-')}.json`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                }}
+              >
+                <Icon icon="lucide:share" className="w-4 h-4" />
+                Export
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2 text-red-600 hover:text-red-800 hover:bg-red-100 border-red-200"
+                onClick={() => removeTask(task.id)}
+              >
+                <Icon icon="lucide:trash-2" className="w-4 h-4" />
+                Delete
+              </Button>
             </div>
           </CollapsibleContent>
         </CardContent>

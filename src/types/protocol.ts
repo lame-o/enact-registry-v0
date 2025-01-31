@@ -1,7 +1,5 @@
 export type Author = {
   name: string;
-  email?: string;
-  organization?: string;
 };
 
 export type InputConfig = {
