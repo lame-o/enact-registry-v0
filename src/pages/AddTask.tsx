@@ -174,8 +174,7 @@ const AddTask = () => {
           [input.name]: {
             type: input.type,
             description: input.description,
-            default: input.default || undefined,
-            required: !input.default
+            default: input.default || undefined
           }
         }), {}),
         tasks: [

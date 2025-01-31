@@ -6,7 +6,6 @@ export type InputConfig = {
   type: string;
   description: string;
   default?: any;
-  required?: boolean;
 };
 
 export type TaskDefinition = {
