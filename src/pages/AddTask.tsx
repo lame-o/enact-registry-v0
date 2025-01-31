@@ -120,8 +120,6 @@ const AddTask = () => {
       // Set individual form fields for the form UI
       if (taskData.protocolDetails.authors?.[0]) {
         form.setValue('authorName', taskData.protocolDetails.authors[0].name);
-        form.setValue('authorEmail', taskData.protocolDetails.authors[0].email || '');
-        form.setValue('authorOrg', taskData.protocolDetails.authors[0].organization || '');
       }
 
       // Set first input if exists

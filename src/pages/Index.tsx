@@ -42,8 +42,8 @@ const TaskCard = ({ task }: { task: Task }) => {
                 {task.isAtomic && (
                   <Badge variant="secondary" className="bg-purple-100 text-purple-700 border border-purple-700 pointer-events-none">atomic</Badge>
                 )}
-                {task.teams.map((team) => (
-                  <Badge key={team} variant="secondary" className="bg-[#BCBCBC] text-gray-700 border border-gray-700 pointer-events-none">@{team}</Badge>
+                {task.protocolDetails.authors.map((author) => (
+                  <Badge key={author.name} variant="secondary" className="bg-[#BCBCBC] text-gray-700 border border-gray-700 pointer-events-none">@{author.name}</Badge>
                 ))}
               </div>
             </div>
