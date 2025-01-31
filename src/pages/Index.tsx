@@ -158,11 +158,12 @@ const TaskCard = ({ task }: { task: Task }) => {
                 ))}
               </div>
             </div>
-            <div className="flex items-center gap-2 mt-4 border-t pt-4">
+            <div className="h-px bg-gray-400/30 mt-4" />
+            <div className="flex items-center gap-2 mt-4">
               <Button
                 variant="outline"
                 size="sm"
-                className="flex-1 flex items-center gap-2 justify-center"
+                className="flex-1 flex items-center gap-2 justify-center bg-[#BCBCBC] text-black border border-gray-700 hover:bg-[#CFCFCF] hover:text-black"
                 onClick={() => {
                   // Convert task to YAML and download
                   const yaml = JSON.stringify(task.protocolDetails, null, 2); // TODO: Convert to actual YAML
@@ -183,7 +184,7 @@ const TaskCard = ({ task }: { task: Task }) => {
               <Button
                 variant="outline"
                 size="sm"
-                className="flex-1 flex items-center gap-2 justify-center"
+                className="flex-1 flex items-center gap-2 justify-center bg-[#BCBCBC] text-black border border-gray-700 hover:bg-[#CFCFCF] hover:text-black"
                 onClick={() => {
                   const json = JSON.stringify(task.protocolDetails, null, 2);
                   const blob = new Blob([json], { type: 'application/json' });
@@ -198,17 +199,18 @@ const TaskCard = ({ task }: { task: Task }) => {
                 }}
               >
                 <Icon icon="lucide:share" className="w-4 h-4" />
-                Export
+                Export (JSON currently)
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2 text-red-600 hover:text-red-800 hover:bg-red-100 border-red-200"
-                onClick={() => removeTask(task.id)}
-              >
-                <Icon icon="lucide:trash-2" className="w-4 h-4" />
-                Delete
-              </Button>
+              {task.id > 2 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2 text-red-700 bg-red-100 hover:text-red-700 hover:bg-red-200 border-red-700"
+                  onClick={() => removeTask(task.id)}
+                >
+                  <Icon icon="lucide:trash-2" className="w-4 h-4" />
+                </Button>
+              )}
             </div>
           </CollapsibleContent>
         </CardContent>
@@ -241,7 +243,7 @@ const Index = () => {
           <div className="flex justify-between items-center mb-8">
             <div className="flex items-center gap-3">
               <img src="/globe-bit.png" alt="Enact Globe" className="h-10 w-auto rotate-180" />
-              <h1 className="text-4xl font-bold text-white">Enact Registry</h1>
+              <h1 className="text-4xl font-bold text-[#dddddd]">Enact Registry</h1>
             </div>
             <Button 
               onClick={() => navigate("/add-task")}
@@ -257,7 +259,7 @@ const Index = () => {
               placeholder="Search by name, ID, or description..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[#1a1f2c] border-gray-700 text-white placeholder-gray-400 focus:border-enact-accent focus:ring-0"
+              className="w-full bg-[#dddddd] border-gray-700 text-black placeholder-gray-400 focus:border-enact-accent focus:ring-0"
             />
           </div>
 

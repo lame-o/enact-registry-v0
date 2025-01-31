@@ -75,10 +75,9 @@ const AddTask = () => {
 
       // Map YAML to our Task structure
       const taskData: Task = {
-        id: 0, // This will be set by the backend
+        id: 0, // This will be set by the store
         name: yamlContent.id,
         description: yamlContent.description || "",
-        version: yamlContent.version || "1.0.0",
         teams: [], // This can be set manually
         isAtomic: yamlContent.type === "atomic",
         protocolDetails: {
@@ -86,7 +85,6 @@ const AddTask = () => {
           id: yamlContent.id,
           name: yamlContent.id,
           description: yamlContent.description || "",
-          version: yamlContent.version || "1.0.0",
           authors: yamlContent.authors || [],
           inputs: yamlContent.inputs || {},
           tasks: (yamlContent.tasks || []).map(task => ({
@@ -112,10 +110,7 @@ const AddTask = () => {
       // Set form values
       form.setValue('taskId', taskData.name);
       form.setValue('description', taskData.description);
-      form.setValue('version', taskData.version);
-      form.setValue('teams', taskData.teams);
       form.setValue('isAtomic', taskData.isAtomic);
-      form.setValue('protocolDetails', taskData.protocolDetails);
 
       // Set individual form fields for the form UI
       if (taskData.protocolDetails.authors?.[0]) {
@@ -156,7 +151,6 @@ const AddTask = () => {
     const newTask = {
       name: values.taskId,
       description: values.description,
-      version: "1.0.0",
       teams: [],
       isAtomic: true,
       protocolDetails: {
@@ -164,13 +158,10 @@ const AddTask = () => {
         id: values.taskId,
         name: values.taskId,
         description: values.description,
-        version: "1.0.0",
         type: values.protocolType,
         authors: [
           {
-            name: values.authorName,
-            email: "",
-            organization: ""
+            name: values.authorName
           }
         ],
         inputs: values.inputs.reduce((acc, input) => ({
